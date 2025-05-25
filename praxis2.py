@@ -25,10 +25,13 @@ def simular_bumeran(R, w, k, t_max, dt):
         print(f"Error durante la simulación: {e}")
 
 if __name__ == '__main__':
+    # Constante áurea (phi)
+    phi = (1 + np.sqrt(5)) / 2
+
     # Parámetros de simulación
     R = 10           # Radio inicial (m)
-    w = 0.9 * np.pi  # Velocidad angular (rad/s) (afecta la cantidad de vueltas por segundo)
-    k = 0.1          # Coeficiente de amortiguamiento
+    w = 0.3 * np.pi  # Velocidad angular (rad/s) (afecta la cantidad de vueltas por segundo)
+    k = 0.05          # Coeficiente de amortiguamiento
 
     # Condiciones atmosféricas
     # k = 0.05   Día calmo, poco viento
