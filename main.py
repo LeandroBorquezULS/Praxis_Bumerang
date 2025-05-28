@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 import time
 from pulido_praxis1 import simular_bumeran_animado
 
-
 # --- PARÁMETROS INICIALES ---
 valores_predeterminados = {
     'R': 10.0,   # Radio de la trayectoria
