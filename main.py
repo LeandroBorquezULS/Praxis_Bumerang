@@ -3,6 +3,7 @@ from tkinter import messagebox
 import numpy as np
 import matplotlib.pyplot as plt
 import time
+from pulido_praxis1 import simular_bumeran_animado
 
 # --- PARÁMETROS INICIALES ---
 valores_predeterminados = {
@@ -88,6 +89,52 @@ def mostrar_formula_wolfram(R, v, k, t_final, root):
     tk.Button(ventana_formula, text="Copiar fórmula", command=copiar_al_portapapeles).pack(pady=5)
     tk.Button(ventana_formula, text="Cerrar", command=ventana_formula.destroy).pack(pady=5)
 
+def iniciar_simulacion_avanzada():
+    ventana_avanzada = tk.Toplevel(root)
+    ventana_avanzada.title("Parámetros - Simulación Avanzada")
+    ventana_avanzada.geometry("350x400")
+
+    parametros = {
+        'R_x': 10.0,
+        'R_y': 4.0,
+        'omega_x': 0.35 * np.pi,
+        'omega_y': 0.3 * np.pi,
+        'k': 0.1,
+        'z_max': 5.0,
+        't_max': 10.0,
+        'dt': 0.01
+    }
+
+    entries_avanzados = {}
+
+    fila = 0
+    for clave, valor in parametros.items():
+        tk.Label(ventana_avanzada, text=f"{clave}:").grid(row=fila, column=0, sticky='e', padx=10, pady=5)
+        entrada = tk.Entry(ventana_avanzada, width=15)
+        entrada.insert(0, str(valor))
+        entrada.grid(row=fila, column=1, pady=5)
+        entries_avanzados[clave] = entrada
+        fila += 1
+
+    def ejecutar_simulacion_avanzada():
+        try:
+            R_x = float(entries_avanzados['R_x'].get())
+            R_y = float(entries_avanzados['R_y'].get())
+            omega_x = float(entries_avanzados['omega_x'].get())
+            omega_y = float(entries_avanzados['omega_y'].get())
+            k = float(entries_avanzados['k'].get())
+            z_max = float(entries_avanzados['z_max'].get())
+            t_max = float(entries_avanzados['t_max'].get())
+            dt = float(entries_avanzados['dt'].get())
+
+            ventana_avanzada.destroy()
+            simular_bumeran_animado(R_x, R_y, omega_x, omega_y, k, z_max, t_max, dt)
+        except ValueError:
+            messagebox.showerror("Error", "Todos los parámetros deben ser números válidos.")
+
+    # Botón de ejecución
+    tk.Button(ventana_avanzada, text="Iniciar Simulación", command=ejecutar_simulacion_avanzada).grid(row=fila, column=0, columnspan=2, pady=20)
+
 # --- VENTANA PRINCIPAL (Interfaz gráfica) ---
 root = tk.Tk()
 root.title("Simulación de Bumerang")
@@ -100,6 +147,9 @@ def iniciar_simulacion():
         v = float(entries['v'].get())
         k = float(entries['k'].get())
 
+        if R <= 0 or v <= 0 or k < 0:
+                messagebox.showerror("Error", "Los parámetros deben ser positivos (R y v > 0, k ≥ 0).")
+                return
         # Se llama a la función de simulación con los valores ingresados
         simular_trayectoria(R, v, k)
     except ValueError:
@@ -135,9 +185,9 @@ for i, (clave, valor) in enumerate(valores_predeterminados.items()):
 frame_bottom = tk.Frame(root)
 frame_bottom.pack(pady=20)
 
-btn_basica = tk.Button(frame_bottom, text="Iniciar simulación básica", command=iniciar_simulacion, width=25)    # Botón para iniciar la simulación
-btn_avanzada = tk.Button(frame_bottom, text="Simulación avanzada", state="disabled", width=25)                  # Botón para simulación avanzada (desactivado)
-btn_salir = tk.Button(frame_bottom, text="Salir", command=root.destroy, width=25)                               # Botón para cerrar la aplicación
+btn_basica = tk.Button(frame_bottom, text="Iniciar simulación básica", command=iniciar_simulacion, width=25)        # Botón para iniciar la simulación
+btn_avanzada = tk.Button(frame_bottom, text="Simulación avanzada", command=iniciar_simulacion_avanzada, width=25)   # Botón para simulación avanzada (desactivado)
+btn_salir = tk.Button(frame_bottom, text="Salir", command=root.destroy, width=25)                                   # Botón para cerrar la aplicación
 
 # Posicionar los botones uno debajo del otro
 btn_basica.grid(row=0, column=0, pady=5)
