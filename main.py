@@ -3,7 +3,8 @@ from tkinter import messagebox
 import numpy as np
 import matplotlib.pyplot as plt
 import time
-from pulido_praxis1 import simular_bumeran_animado
+from plano_2D import simular_bumeran_animado
+from plano_3D import simular_bumeran_animado_3d_vectores
 
 # --- PARÁMETROS INICIALES ---
 valores_predeterminados = {
