@@ -1,8 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
 import numpy as np
-# Eliminar esta línea:
-# from simulacion_basica import simular_trayectoria
 from plano_2D import simular_bumeran_animado
 from plano_3D import simular_bumeran_animado_3d_vectores
 
