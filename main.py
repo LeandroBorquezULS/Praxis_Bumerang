@@ -100,7 +100,6 @@ class VentanaPrincipal:
             'R': 10.0,
             'v': 14.0,
             'k': 0.1,
-            't': 10.0  # Añadido nuevo parámetro de tiempo
         }
 
         for i, (key, value) in enumerate(parametros.items()):
@@ -108,7 +107,6 @@ class VentanaPrincipal:
                 'R': 'Radio (R):',
                 'v': 'Velocidad (v):',
                 'k': 'Constante de amortiguamiento (k):',
-                't': 'Tiempo máximo (t):'
             }
             tk.Label(ventana, text=label_text[key]).pack(pady=5)
             entry = tk.Entry(ventana)
@@ -121,9 +119,8 @@ class VentanaPrincipal:
                 R = float(entries['R'].get())
                 v = float(entries['v'].get())
                 k = float(entries['k'].get())
-                t = float(entries['t'].get())
                 ventana.destroy()
-                simular_trayectoria(R, v, k, self.root, t_max=t)  # Añadido parámetro t_max
+                simular_trayectoria(R, v, k, self.root)  # Añadido parámetro t_max
             except ValueError:
                 messagebox.showerror("Error", "Valores inválidos")
 
@@ -133,7 +130,7 @@ class VentanaPrincipal:
     def personalizado_avanzado(self):
         ventana = tk.Toplevel(self.root)
         ventana.title("Simulación Personalizada Avanzada")
-        ventana.geometry("300x400")
+        ventana.geometry("300x500")
 
         entries = {}
         parametros = {
