@@ -109,7 +109,7 @@ class VentanaPrincipal:
         for i, (key, value) in enumerate(parametros.items()):
             label_text = {
                 'R': 'Radio (R):',
-                'v': 'Velocidad (v):',
+                'v': 'Velocidad angular (w):',
                 'k': 'Constante de amortiguamiento (k):',
                 't': 'Tiempo máximo (t):'
             }
@@ -133,13 +133,13 @@ class VentanaPrincipal:
                 v = float(entries['v'].get())
                 k = float(entries['k'].get())
                 t = float(entries['t'].get())
-                omega = v/R
+                w = v/R
                 ventana.destroy()
                 
                 if dim_var.get() == "2D":
-                    simular_bumeran_animado(R, R, omega, omega, k, 5.0, t, 0.01)
+                    simular_bumeran_animado(R, R, w, w, k, 5.0, t, 0.01)
                 else:
-                    simular_bumeran_animado_3d_vectores(R, R, omega, omega, k, 5.0, t, 0.01)
+                    simular_bumeran_animado_3d_vectores(R, R, w, w, k, 5.0, t, 0.01)
                 
                 self.mostrar_formula_wolfram(R, v, k, t)
             except ValueError:
@@ -182,8 +182,8 @@ class VentanaPrincipal:
         parametros = {
             'R_x': 10.0,
             'R_y': 4.0,
-            'omega_x': 0.35,
-            'omega_y': 0.3,
+            'w_x': 0.35,
+            'w_y': 0.3,
             'k': 0.1,
             'z_max': 5.0,
             't_max': 10.0,
@@ -221,7 +221,7 @@ class VentanaPrincipal:
                 else:
                     simular_bumeran_animado_3d_vectores(**valores)
                 
-                formula = f"parametric plot {{ {valores['R_x']:.2f}*cos({valores['omega_x']:.2f}*t)*exp(-{valores['k']:.2f}*t), {valores['R_y']:.2f}*sin({valores['omega_y']:.2f}*t)*exp(-{valores['k']:.2f}*t) }} for t=0 to {valores['t_max']:.2f}"
+                formula = f"parametric plot {{ {valores['R_x']:.2f}*cos({valores['w_x']:.2f}*t)*exp(-{valores['k']:.2f}*t), {valores['R_y']:.2f}*sin({valores['w_y']:.2f}*t)*exp(-{valores['k']:.2f}*t) }} for t=0 to {valores['t_max']:.2f}"
                 self.mostrar_formula_wolfram_avanzado(formula)
             except ValueError:
                 messagebox.showerror("Error", "Valores inválidos")
