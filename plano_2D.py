@@ -60,21 +60,4 @@ def simular_bumeran_animado(R_x, R_y, omega_x, omega_y, k, z_max, t_max, dt):
     ani = FuncAnimation(fig, update, frames=len(t), init_func=init, blit=True, interval=1)
     plt.show()
 
-if __name__ == "__main__":
-    R_x = 10               # Radio en X
-    R_y = 4               # Radio en Y
-    omega_x = 0.35 * np.pi # Velocidad angular en X
-    omega_y = 0.3 * np.pi # Velocidad angular en Y
-    k = 0.1                # Amortiguamiento
 
-      # Condiciones atmosféricas
-    # k = 0.05   Día calmo, poco viento
-    # k = 0.1    Condiciones normales
-    # k = 0.3    Día ventoso
-    # k = 0.5    Condiciones muy adversas
-
-    z_max = 5              # Altura máxima
-    t_max = 10            # Tiempo total
-    dt = 0.01              # Paso de tiempo
-
-    simular_bumeran_animado(R_x, R_y, omega_x, omega_y, k, z_max, t_max, dt)

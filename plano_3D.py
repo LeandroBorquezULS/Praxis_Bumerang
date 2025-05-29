@@ -212,4 +212,5 @@ if __name__ == "__main__":
         simular_bumeran_animado_3d_vectores(R_x, R_y, omega_x, omega_y, k, z_max, t_max, dt)
 
     else:
+
         print("Saliendo de la simulación.")

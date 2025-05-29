@@ -1,104 +1,167 @@
 import tkinter as tk
 from tkinter import messagebox
-import numpy as np  
+import numpy as np
 from simulacion_basica import simular_trayectoria
-from pulido_praxis1 import simular_bumeran_animado
+from plano_2D import simular_bumeran_animado
+from plano_3D import simular_bumeran_animado_3d_vectores
 
-# --- PARÁMETROS INICIALES ---
-valores_predeterminados = {
-    'R': 10.0,   # Radio de la trayectoria
-    'v': 14.0,   # Velocidad lineal del bumerang (inicial)
-    'k': 0.1     # Coeficiente de amortiguamiento (desaceleración)
-}
+class VentanaPrincipal:
+    def __init__(self):
+        self.root = tk.Tk()
+        self.root.title("Simulación de Bumerang")
+        self.root.geometry("400x300")
+        self.crear_interfaz()
 
-def iniciar_simulacion():
-    try:
-        R = float(entries['R'].get())
-        v = float(entries['v'].get())
-        k = float(entries['k'].get())
-        if R <= 0 or v <= 0 or k < 0:
-            messagebox.showerror("Error", "Los parámetros deben ser positivos (R y v > 0, k ≥ 0).")
-            return
-        simular_trayectoria(R, v, k, root)
-    except ValueError:
-        messagebox.showerror("Error", "Todos los parámetros deben ser números válidos.")
+    def crear_interfaz(self):
+        # Frame principal
+        frame = tk.Frame(self.root, padx=20, pady=20)
+        frame.pack(expand=True)
 
+        # Título
+        titulo = tk.Label(frame, text="Simulador de Bumerang", font=("Arial", 16, "bold"))
+        titulo.pack(pady=20)
 
-def iniciar_simulacion_avanzada():
-    ventana_avanzada = tk.Toplevel(root)
-    ventana_avanzada.title("Parámetros - Simulación Avanzada")
-    ventana_avanzada.geometry("350x400")
+        # Botones
+        tk.Button(frame, text="Simulación por defecto", 
+                 command=self.menu_defecto, width=25).pack(pady=10)
+        
+        tk.Button(frame, text="Simulación personalizada simple", 
+                 command=self.personalizado_simple, width=25).pack(pady=10)
+        
+        tk.Button(frame, text="Simulación personalizada avanzada", 
+                 command=self.personalizado_avanzado, width=25).pack(pady=10)
+        
+        tk.Button(frame, text="Salir", 
+                 command=self.root.destroy, width=25).pack(pady=10)
 
-    parametros = {
-        'R_x': 10.0,
-        'R_y': 4.0,
-        'omega_x': 0.35 * np.pi,
-        'omega_y': 0.3 * np.pi,
-        'k': 0.1,
-        'z_max': 5.0,
-        't_max': 10.0,
-        'dt': 0.01
-    }
+    def menu_defecto(self):
+        ventana = tk.Toplevel(self.root)
+        ventana.title("Tipo de simulación por defecto")
+        ventana.geometry("300x400")
 
-    entries_avanzados = {}
+        tk.Label(ventana, text="=== Menú de lanzamientos por defecto ===", 
+                 font=("Arial", 12, "bold")).pack(pady=10)
 
-    for i, (clave, valor) in enumerate(parametros.items()):
-        tk.Label(ventana_avanzada, text=f"{clave}:").grid(row=i, column=0, sticky='e', padx=10, pady=5)
-        entrada = tk.Entry(ventana_avanzada, width=15)
-        entrada.insert(0, str(valor))
-        entrada.grid(row=i, column=1, pady=5)
-        entries_avanzados[clave] = entrada
+        def simulacion_2d(tipo):
+            ventana.destroy()
+            if tipo == "normal":
+                simular_bumeran_animado(-15, 4, 0.35*np.pi, 0.3*np.pi, 0.1, 15, 10, 0.01)
+            elif tipo == "desviado":
+                simular_bumeran_animado(15, 6, 0.4*np.pi, 0.2*np.pi, 0.3, 15, 10, 0.01)
+            elif tipo == "perfecto":
+                simular_bumeran_animado(25, 8, 1.5*np.pi, 1.5*np.pi, 0.15, 6, 7, 0.01)
+            elif tipo == "agresivo":
+                simular_bumeran_animado(15, 5, 0.5*np.pi, 0.4*np.pi, 0.2, 15, 9, 0.01)
 
-    def ejecutar_simulacion_avanzada():
-        try:
-            valores = {clave: float(entry.get()) for clave, entry in entries_avanzados.items()}
-            ventana_avanzada.destroy()
-            simular_bumeran_animado(**valores)
-        except ValueError:
-            messagebox.showerror("Error", "Todos los parámetros deben ser números válidos.")
+        def simulacion_3d(tipo):
+            ventana.destroy()
+            if tipo == "normal":
+                simular_bumeran_animado_3d_vectores(-15, 4, 0.35*np.pi, 0.3*np.pi, 0.1, 15, 10, 0.01)
+            elif tipo == "desviado":
+                simular_bumeran_animado_3d_vectores(15, 6, 0.4*np.pi, 0.2*np.pi, 0.3, 15, 10, 0.01)
+            elif tipo == "perfecto":
+                simular_bumeran_animado_3d_vectores(25, 8, 1.5*np.pi, 1.5*np.pi, 0.15, 6, 7, 0.01)
+            elif tipo == "agresivo":
+                simular_bumeran_animado_3d_vectores(15, 5, 0.5*np.pi, 0.4*np.pi, 0.2, 15, 9, 0.01)
 
-    tk.Button(ventana_avanzada, text="Iniciar Simulación", command=ejecutar_simulacion_avanzada).grid(row=len(parametros), column=0, columnspan=2, pady=20)
+        # Frame para 2D
+        frame_2d = tk.LabelFrame(ventana, text="Simulación 2D", padx=10, pady=5)
+        frame_2d.pack(padx=10, pady=5, fill="x")
 
-# --- FUNCIÓN PARA INICIAR LA SIMULACIÓN ---
-def iniciar_simulacion():
-    try:
-        R = float(entries['R'].get())
-        v = float(entries['v'].get())
-        k = float(entries['k'].get())
+        tk.Button(frame_2d, text="1. Lanzamiento normal", 
+                 command=lambda: simulacion_2d("normal"), width=25).pack(pady=2)
+        tk.Button(frame_2d, text="2. Lanzamiento desviado", 
+                 command=lambda: simulacion_2d("desviado"), width=25).pack(pady=2)
+        tk.Button(frame_2d, text="3. Lanzamiento perfecto", 
+                 command=lambda: simulacion_2d("perfecto"), width=25).pack(pady=2)
+        tk.Button(frame_2d, text="4. Lanzamiento agresivo", 
+                 command=lambda: simulacion_2d("agresivo"), width=25).pack(pady=2)
 
-        if R <= 0 or v <= 0 or k < 0:
-                messagebox.showerror("Error", "Los parámetros deben ser positivos (R y v > 0, k ≥ 0).")
-                return
-        # Se llama a la función de simulación con los valores ingresados
-        simular_trayectoria(R, v, k)
-    except ValueError:
-        messagebox.showerror("Error", "Todos los parámetros deben ser números válidos.")
+        # Frame para 3D
+        frame_3d = tk.LabelFrame(ventana, text="Simulación 3D", padx=10, pady=5)
+        frame_3d.pack(padx=10, pady=5, fill="x")
 
+        tk.Button(frame_3d, text="1. Lanzamiento normal", 
+                 command=lambda: simulacion_3d("normal"), width=25).pack(pady=2)
+        tk.Button(frame_3d, text="2. Lanzamiento desviado", 
+                 command=lambda: simulacion_3d("desviado"), width=25).pack(pady=2)
+        tk.Button(frame_3d, text="3. Lanzamiento perfecto", 
+                 command=lambda: simulacion_3d("perfecto"), width=25).pack(pady=2)
+        tk.Button(frame_3d, text="4. Lanzamiento agresivo", 
+                 command=lambda: simulacion_3d("agresivo"), width=25).pack(pady=2)
 
-# --- VENTANA PRINCIPAL (Interfaz gráfica) ---
-root = tk.Tk()
-root.title("Simulación de Bumerang")
-root.geometry("400x250")              # Tamaño de la ventana
+    def personalizado_simple(self):
+        ventana = tk.Toplevel(self.root)
+        ventana.title("Simulación Personalizada Simple")
+        ventana.geometry("300x300")  # Aumenté un poco la altura para el nuevo campo
 
+        entries = {}
+        parametros = {
+            'R': 10.0,
+            'v': 14.0,
+            'k': 0.1,
+        }
 
-# Crear etiquetas y campos de entrada
-frame_top = tk.Frame(root)
-frame_top.pack(pady=10)
+        for i, (key, value) in enumerate(parametros.items()):
+            label_text = {
+                'R': 'Radio (R):',
+                'v': 'Velocidad (v):',
+                'k': 'Constante de amortiguamiento (k):',
+            }
+            tk.Label(ventana, text=label_text[key]).pack(pady=5)
+            entry = tk.Entry(ventana)
+            entry.insert(0, str(value))
+            entry.pack()
+            entries[key] = entry
 
-entries = {}
-for i, (clave, valor) in enumerate(valores_predeterminados.items()):
-    tk.Label(frame_top, text=f"{clave}:", width=5).grid(row=i, column=0, sticky='e')
-    entrada = tk.Entry(frame_top, width=20, fg='gray')
-    entrada.insert(0, str(valor))
-    entrada.grid(row=i, column=1)
-    entrada.bind("<KeyRelease>")
-    entries[clave] = entrada
+        def ejecutar():
+            try:
+                R = float(entries['R'].get())
+                v = float(entries['v'].get())
+                k = float(entries['k'].get())
+                ventana.destroy()
+                simular_trayectoria(R, v, k, self.root)  # Añadido parámetro t_max
+            except ValueError:
+                messagebox.showerror("Error", "Valores inválidos")
 
-frame_bottom = tk.Frame(root)
-frame_bottom.pack(pady=20)
+        tk.Button(ventana, text="Iniciar Simulación", 
+                 command=ejecutar).pack(pady=20)
 
-tk.Button(frame_bottom, text="Iniciar simulación básica", command=iniciar_simulacion, width=25).grid(row=0, column=0, pady=5)
-tk.Button(frame_bottom, text="Simulación avanzada", command=iniciar_simulacion_avanzada, width=25).grid(row=1, column=0, pady=5)
-tk.Button(frame_bottom, text="Salir", command=root.destroy, width=25).grid(row=2, column=0, pady=5)
+    def personalizado_avanzado(self):
+        ventana = tk.Toplevel(self.root)
+        ventana.title("Simulación Personalizada Avanzada")
+        ventana.geometry("300x500")
 
-root.mainloop()
+        entries = {}
+        parametros = {
+            'R_x': 10.0,
+            'R_y': 4.0,
+            'omega_x': 0.35,
+            'omega_y': 0.3,
+            'k': 0.1,
+            'z_max': 5.0,
+            't_max': 10.0,
+            'dt': 0.01
+        }
+
+        for i, (key, value) in enumerate(parametros.items()):
+            tk.Label(ventana, text=f"{key}:").pack(pady=2)
+            entry = tk.Entry(ventana)
+            entry.insert(0, str(value))
+            entry.pack()
+            entries[key] = entry
+
+        def ejecutar():
+            try:
+                valores = {k: float(v.get()) for k, v in entries.items()}
+                ventana.destroy()
+                simular_bumeran_animado(**valores)
+            except ValueError:
+                messagebox.showerror("Error", "Valores inválidos")
+
+        tk.Button(ventana, text="Iniciar Simulación", 
+                 command=ejecutar).pack(pady=20)
+
+if __name__ == "__main__":
+    app = VentanaPrincipal()
+    app.root.mainloop()
