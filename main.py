@@ -92,7 +92,7 @@ class VentanaPrincipal:
     def personalizado_simple(self):
         ventana = tk.Toplevel(self.root)
         ventana.title("Simulación Personalizada Simple")
-        ventana.geometry("300x300")
+        ventana.geometry("300x350")  # Aumentado para el nuevo selector
 
         entries = {}
         parametros = {
@@ -102,18 +102,30 @@ class VentanaPrincipal:
             't': 10.0
         }
 
+        # Frame para parámetros
+        frame_params = tk.Frame(ventana)
+        frame_params.pack(pady=10)
+
         for i, (key, value) in enumerate(parametros.items()):
             label_text = {
                 'R': 'Radio (R):',
                 'v': 'Velocidad (v):',
                 'k': 'Constante de amortiguamiento (k):',
-                't': 'Tiempo máximo (t):'  # Falta esta línea
+                't': 'Tiempo máximo (t):'
             }
-            tk.Label(ventana, text=label_text[key]).pack(pady=5)
-            entry = tk.Entry(ventana)
+            tk.Label(frame_params, text=label_text[key]).pack(pady=5)
+            entry = tk.Entry(frame_params)
             entry.insert(0, str(value))
             entry.pack()
             entries[key] = entry
+
+        # Frame para selección de dimensión
+        frame_dim = tk.LabelFrame(ventana, text="Seleccione dimensión", padx=10, pady=5)
+        frame_dim.pack(pady=10)
+        
+        dim_var = tk.StringVar(value="2D")
+        tk.Radiobutton(frame_dim, text="2D", variable=dim_var, value="2D").pack(side=tk.LEFT, padx=10)
+        tk.Radiobutton(frame_dim, text="3D", variable=dim_var, value="3D").pack(side=tk.LEFT, padx=10)
 
         def ejecutar():
             try:
@@ -121,17 +133,21 @@ class VentanaPrincipal:
                 v = float(entries['v'].get())
                 k = float(entries['k'].get())
                 t = float(entries['t'].get())
-                omega = v/R  # Calculamos omega a partir de v y R
+                omega = v/R
                 ventana.destroy()
-                # Llamamos a simular_bumeran_animado con los mismos parámetros en x e y
-                simular_bumeran_animado(R, R, omega, omega, k, 5.0, t, 0.01)
-                # Después de la simulación, mostramos la fórmula de Wolfram
+                
+                if dim_var.get() == "2D":
+                    simular_bumeran_animado(R, R, omega, omega, k, 5.0, t, 0.01)
+                else:
+                    simular_bumeran_animado_3d_vectores(R, R, omega, omega, k, 5.0, t, 0.01)
+                
                 self.mostrar_formula_wolfram(R, v, k, t)
             except ValueError:
                 messagebox.showerror("Error", "Valores inválidos")
 
         tk.Button(ventana, text="Iniciar Simulación", 
-                 command=ejecutar).pack(pady=20)
+                 command=ejecutar,
+                 width=25, height=2).pack(pady=20)
 
     def mostrar_formula_wolfram(self, R, v, k, t_final):
         formula = f"parametric plot {{ {R:.2f}*cos({v/R:.2f}*t)*exp(-{k:.2f}*t), {R:.2f}*sin({v/R:.2f}*t)*exp(-{k:.2f}*t) }} for t=0 to {t_final:.2f}"
@@ -160,7 +176,7 @@ class VentanaPrincipal:
     def personalizado_avanzado(self):
         ventana = tk.Toplevel(self.root)
         ventana.title("Simulación Personalizada Avanzada")
-        ventana.geometry("350x600")
+        ventana.geometry("350x650")  # Aumentado para el nuevo selector
         
         entries = {}
         parametros = {
@@ -174,7 +190,6 @@ class VentanaPrincipal:
             'dt': 0.01
         }
         
-        # Frame principal para mejor organización
         frame = tk.Frame(ventana, padx=20, pady=10)
         frame.pack(expand=True, fill="both")
         
@@ -188,12 +203,24 @@ class VentanaPrincipal:
             entry.pack(pady=2)
             entries[key] = entry
 
+        # Frame para selección de dimensión
+        frame_dim = tk.LabelFrame(frame, text="Seleccione dimensión", padx=10, pady=5)
+        frame_dim.pack(pady=10)
+        
+        dim_var = tk.StringVar(value="2D")
+        tk.Radiobutton(frame_dim, text="2D", variable=dim_var, value="2D").pack(side=tk.LEFT, padx=10)
+        tk.Radiobutton(frame_dim, text="3D", variable=dim_var, value="3D").pack(side=tk.LEFT, padx=10)
+
         def ejecutar():
             try:
                 valores = {k: float(v.get()) for k, v in entries.items()}
                 ventana.destroy()
-                simular_bumeran_animado(**valores)
-                # Después de la simulación, mostramos la fórmula de Wolfram
+                
+                if dim_var.get() == "2D":
+                    simular_bumeran_animado(**valores)
+                else:
+                    simular_bumeran_animado_3d_vectores(**valores)
+                
                 formula = f"parametric plot {{ {valores['R_x']:.2f}*cos({valores['omega_x']:.2f}*t)*exp(-{valores['k']:.2f}*t), {valores['R_y']:.2f}*sin({valores['omega_y']:.2f}*t)*exp(-{valores['k']:.2f}*t) }} for t=0 to {valores['t_max']:.2f}"
                 self.mostrar_formula_wolfram_avanzado(formula)
             except ValueError:
