@@ -130,7 +130,7 @@ class VentanaPrincipal:
         def ejecutar():
             try:
                 R = float(entries['R'].get())
-                w = float(entries['w'].get())  # Cambiar 'v' por 'w'
+                w = float(entries['w'].get())
                 k = float(entries['k'].get())
                 t = float(entries['t'].get())
                 ventana.destroy()
@@ -140,7 +140,8 @@ class VentanaPrincipal:
                 else:
                     simular_bumeran_animado_3d_vectores(R, R, w, w, k, 5.0, t, 0.01)
                 
-                self.mostrar_formula_wolfram(R, R*w, k, t)  # Calculamos v como R*w
+                # Mostrar fórmula Wolfram independientemente de la dimensión elegida
+                self.mostrar_formula_wolfram(R, R*w, k, t)  
             except ValueError:
                 messagebox.showerror("Error", "Valores inválidos")
 
