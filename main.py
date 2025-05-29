@@ -1,7 +1,8 @@
 import tkinter as tk
 from tkinter import messagebox
 import numpy as np
-from simulacion_basica import simular_trayectoria
+# Eliminar esta línea:
+# from simulacion_basica import simular_trayectoria
 from plano_2D import simular_bumeran_animado
 from plano_3D import simular_bumeran_animado_3d_vectores
 
@@ -56,13 +57,13 @@ class VentanaPrincipal:
         def simulacion_3d(tipo):
             ventana.destroy()
             if tipo == "normal":
-                simular_bumeran_animado_3d_vectores(-15, 4, 0.35*np.pi, 0.3*np.pi, 0.1, 15, 10, 0.01)
+                simular_bumeran_animado_3d_vectores(-15, 4, 0.35*np.pi, 0.3*np.pi, 0.1, 15, 10, 0.06)
             elif tipo == "desviado":
-                simular_bumeran_animado_3d_vectores(15, 6, 0.4*np.pi, 0.2*np.pi, 0.3, 15, 10, 0.01)
+                simular_bumeran_animado_3d_vectores(15, 6, 0.4*np.pi, 0.2*np.pi, 0.3, 15, 10, 0.06)
             elif tipo == "perfecto":
-                simular_bumeran_animado_3d_vectores(25, 8, 1.5*np.pi, 1.5*np.pi, 0.15, 6, 7, 0.01)
+                simular_bumeran_animado_3d_vectores(25, 8, 1.5*np.pi, 1.5*np.pi, 0.15, 6, 7, 0.06)
             elif tipo == "agresivo":
-                simular_bumeran_animado_3d_vectores(15, 5, 0.5*np.pi, 0.4*np.pi, 0.2, 15, 9, 0.01)
+                simular_bumeran_animado_3d_vectores(15, 5, 0.5*np.pi, 0.4*np.pi, 0.2, 15, 9, 0.06)
 
         # Frame para 2D
         frame_2d = tk.LabelFrame(ventana, text="Simulación 2D", padx=10, pady=5)
@@ -93,14 +94,14 @@ class VentanaPrincipal:
     def personalizado_simple(self):
         ventana = tk.Toplevel(self.root)
         ventana.title("Simulación Personalizada Simple")
-        ventana.geometry("300x300")  # Aumenté un poco la altura para el nuevo campo
+        ventana.geometry("300x300")
 
         entries = {}
         parametros = {
             'R': 10.0,
             'v': 14.0,
             'k': 0.1,
-            't': 10.0  # Añadido nuevo parámetro de tiempo
+            't': 10.0
         }
 
         for i, (key, value) in enumerate(parametros.items()):
@@ -122,18 +123,46 @@ class VentanaPrincipal:
                 v = float(entries['v'].get())
                 k = float(entries['k'].get())
                 t = float(entries['t'].get())
+                omega = v/R  # Calculamos omega a partir de v y R
                 ventana.destroy()
-                simular_trayectoria(R, v, k, self.root, t_max=t)  # Añadido parámetro t_max
+                # Llamamos a simular_bumeran_animado con los mismos parámetros en x e y
+                simular_bumeran_animado(R, R, omega, omega, k, 5.0, t, 0.01)
+                # Después de la simulación, mostramos la fórmula de Wolfram
+                self.mostrar_formula_wolfram(R, v, k, t)
             except ValueError:
                 messagebox.showerror("Error", "Valores inválidos")
 
         tk.Button(ventana, text="Iniciar Simulación", 
                  command=ejecutar).pack(pady=20)
 
+    def mostrar_formula_wolfram(self, R, v, k, t_final):
+        formula = f"parametric plot {{ {R:.2f}*cos({v/R:.2f}*t)*exp(-{k:.2f}*t), {R:.2f}*sin({v/R:.2f}*t)*exp(-{k:.2f}*t) }} for t=0 to {t_final:.2f}"
+
+        ventana_formula = tk.Toplevel(self.root)
+        ventana_formula.title("Fórmula para Wolfram Alpha")
+        ventana_formula.geometry("520x200")
+
+        tk.Label(ventana_formula, text="Fórmula lista para copiar y pegar en Wolfram Alpha:").pack(pady=10)
+
+        campo_texto = tk.Text(ventana_formula, wrap="word", height=4, width=65)
+        campo_texto.pack(padx=10)
+        campo_texto.insert("1.0", formula)
+        campo_texto.config(state="disabled")
+
+        def copiar_al_portapapeles():
+            self.root.clipboard_clear()
+            self.root.clipboard_append(formula)
+            messagebox.showinfo("Copiado", "Fórmula copiada al portapapeles.")
+
+        tk.Button(ventana_formula, text="Copiar fórmula", 
+                 command=copiar_al_portapapeles).pack(pady=5)
+        tk.Button(ventana_formula, text="Cerrar", 
+                 command=ventana_formula.destroy).pack(pady=5)
+
     def personalizado_avanzado(self):
         ventana = tk.Toplevel(self.root)
         ventana.title("Simulación Personalizada Avanzada")
-        ventana.geometry("300x400")
+        ventana.geometry("300x450")
 
         entries = {}
         parametros = {
