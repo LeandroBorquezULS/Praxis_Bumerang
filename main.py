@@ -97,7 +97,7 @@ class VentanaPrincipal:
         entries = {}
         parametros = {
             'R': 10.0,
-            'v': 14.0,
+            'w': 0.6,
             'k': 0.1,
             't': 10.0
         }
@@ -109,7 +109,7 @@ class VentanaPrincipal:
         for i, (key, value) in enumerate(parametros.items()):
             label_text = {
                 'R': 'Radio (R):',
-                'v': 'Velocidad angular (w):',
+                'w': 'Velocidad angular (w):',
                 'k': 'Constante de amortiguamiento (k):',
                 't': 'Tiempo máximo (t):'
             }
@@ -130,10 +130,9 @@ class VentanaPrincipal:
         def ejecutar():
             try:
                 R = float(entries['R'].get())
-                v = float(entries['v'].get())
+                w = float(entries['w'].get())  # Cambiar 'v' por 'w'
                 k = float(entries['k'].get())
                 t = float(entries['t'].get())
-                w = v/R
                 ventana.destroy()
                 
                 if dim_var.get() == "2D":
@@ -141,7 +140,7 @@ class VentanaPrincipal:
                 else:
                     simular_bumeran_animado_3d_vectores(R, R, w, w, k, 5.0, t, 0.01)
                 
-                self.mostrar_formula_wolfram(R, v, k, t)
+                self.mostrar_formula_wolfram(R, R*w, k, t)  # Calculamos v como R*w
             except ValueError:
                 messagebox.showerror("Error", "Valores inválidos")
 
