@@ -107,7 +107,6 @@ class VentanaPrincipal:
                 'R': 'Radio (R):',
                 'v': 'Velocidad (v):',
                 'k': 'Constante de amortiguamiento (k):',
-                't': 'Tiempo máximo (t):'
             }
             tk.Label(ventana, text=label_text[key]).pack(pady=5)
             entry = tk.Entry(ventana)
