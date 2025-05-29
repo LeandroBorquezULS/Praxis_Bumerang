@@ -3,12 +3,12 @@ import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 from mpl_toolkits.mplot3d import Axes3D
 
-def simular_bumeran_animado_3d_vectores(R_x, R_y, omega_x, omega_y, k, z_max, t_max, dt):
+def simular_bumeran_animado_3d_vectores(R_x, R_y, w_x, w_y, k, z_max, t_max, dt):
     t = np.arange(0, t_max, dt)
 
     # Trayectoria en XY
-    x = R_x * np.exp(-k * t) * np.cos(omega_x * t)
-    y = R_y * np.exp(-k * t) * np.sin(omega_y * t)
+    x = R_x * np.exp(-k * t) * np.cos(w_x * t)
+    y = R_y * np.exp(-k * t) * np.sin(w_y * t)
 
     # Ajustar para que comience en (0,0)
     x = x - x[0]
