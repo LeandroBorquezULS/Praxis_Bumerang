@@ -107,6 +107,7 @@ class VentanaPrincipal:
                 'R': 'Radio (R):',
                 'v': 'Velocidad (v):',
                 'k': 'Constante de amortiguamiento (k):',
+                't': 'Tiempo máximo (t):'  # Falta esta línea
             }
             tk.Label(ventana, text=label_text[key]).pack(pady=5)
             entry = tk.Entry(ventana)
@@ -134,23 +135,23 @@ class VentanaPrincipal:
 
     def mostrar_formula_wolfram(self, R, v, k, t_final):
         formula = f"parametric plot {{ {R:.2f}*cos({v/R:.2f}*t)*exp(-{k:.2f}*t), {R:.2f}*sin({v/R:.2f}*t)*exp(-{k:.2f}*t) }} for t=0 to {t_final:.2f}"
-
         ventana_formula = tk.Toplevel(self.root)
         ventana_formula.title("Fórmula para Wolfram Alpha")
-        ventana_formula.geometry("520x200")
-
+        ventana_formula.geometry("520x200")  # Eliminar línea duplicada
+        
+        # Solo un Label, no dos
         tk.Label(ventana_formula, text="Fórmula lista para copiar y pegar en Wolfram Alpha:").pack(pady=10)
-
+        
         campo_texto = tk.Text(ventana_formula, wrap="word", height=4, width=65)
         campo_texto.pack(padx=10)
         campo_texto.insert("1.0", formula)
-        campo_texto.config(state="disabled")
-
+        campo_texto.config(state="disabled")  # Solo una vez
+        
         def copiar_al_portapapeles():
             self.root.clipboard_clear()
             self.root.clipboard_append(formula)
-            messagebox.showinfo("Copiado", "Fórmula copiada al portapapeles.")
-
+            messagebox.showinfo("Copiado", "Fórmula copiada al portapapeles.")  # Solo un mensaje
+        
         tk.Button(ventana_formula, text="Copiar fórmula", 
                  command=copiar_al_portapapeles).pack(pady=5)
         tk.Button(ventana_formula, text="Cerrar", 
@@ -159,8 +160,8 @@ class VentanaPrincipal:
     def personalizado_avanzado(self):
         ventana = tk.Toplevel(self.root)
         ventana.title("Simulación Personalizada Avanzada")
-        ventana.geometry("300x450")
-
+        ventana.geometry("350x600")
+        
         entries = {}
         parametros = {
             'R_x': 10.0,
@@ -172,12 +173,19 @@ class VentanaPrincipal:
             't_max': 10.0,
             'dt': 0.01
         }
+        
+        # Frame principal para mejor organización
+        frame = tk.Frame(ventana, padx=20, pady=10)
+        frame.pack(expand=True, fill="both")
+        
+        tk.Label(frame, text="Parámetros de simulación", 
+                 font=("Arial", 12, "bold")).pack(pady=10)
 
-        for i, (key, value) in enumerate(parametros.items()):
-            tk.Label(ventana, text=f"{key}:").pack(pady=2)
-            entry = tk.Entry(ventana)
+        for key, value in parametros.items():
+            tk.Label(frame, text=f"{key}:").pack(pady=3)
+            entry = tk.Entry(frame, width=30)
             entry.insert(0, str(value))
-            entry.pack()
+            entry.pack(pady=2)
             entries[key] = entry
 
         def ejecutar():
@@ -185,12 +193,40 @@ class VentanaPrincipal:
                 valores = {k: float(v.get()) for k, v in entries.items()}
                 ventana.destroy()
                 simular_bumeran_animado(**valores)
+                # Después de la simulación, mostramos la fórmula de Wolfram
+                formula = f"parametric plot {{ {valores['R_x']:.2f}*cos({valores['omega_x']:.2f}*t)*exp(-{valores['k']:.2f}*t), {valores['R_y']:.2f}*sin({valores['omega_y']:.2f}*t)*exp(-{valores['k']:.2f}*t) }} for t=0 to {valores['t_max']:.2f}"
+                self.mostrar_formula_wolfram_avanzado(formula)
             except ValueError:
                 messagebox.showerror("Error", "Valores inválidos")
 
-        tk.Button(ventana, text="Iniciar Simulación", 
-                 command=ejecutar).pack(pady=20)
+        tk.Button(frame, text="Iniciar Simulación", 
+                 command=ejecutar,
+                 width=30,
+                 height=2,
+                 font=("Arial", 10, "bold")).pack(pady=20)
 
+    def mostrar_formula_wolfram_avanzado(self, formula):
+        ventana_formula = tk.Toplevel(self.root)
+        ventana_formula.title("Fórmula para Wolfram Alpha")
+        ventana_formula.geometry("520x200")
+        
+        tk.Label(ventana_formula, 
+                text="Fórmula lista para copiar y pegar en Wolfram Alpha:").pack(pady=10)
+        
+        campo_texto = tk.Text(ventana_formula, wrap="word", height=4, width=65)
+        campo_texto.pack(padx=10)
+        campo_texto.insert("1.0", formula)
+        campo_texto.config(state="disabled")
+        
+        def copiar_al_portapapeles():
+            self.root.clipboard_clear()
+            self.root.clipboard_append(formula)
+            messagebox.showinfo("Copiado", "Fórmula copiada al portapapeles.")
+        
+        tk.Button(ventana_formula, text="Copiar fórmula", 
+                 command=copiar_al_portapapeles).pack(pady=5)
+        tk.Button(ventana_formula, text="Cerrar", 
+                 command=ventana_formula.destroy).pack(pady=5)
 if __name__ == "__main__":
     app = VentanaPrincipal()
     app.root.mainloop()
